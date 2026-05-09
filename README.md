@@ -4,6 +4,7 @@ Hệ thống IoT giám sát học sinh trên xe đưa đón. Sử dụng STM32F4
 
 ## 🎥 Video Demo
 [![Video Demo Hệ Thống](image/image_demo.png)](https://youtu.be/z53JZ541N3Y?si=kEnjyrutjtcwe4ZM)
+
 *(Nhấn vào hình ảnh trên để xem chi tiết video demo hệ thống)*
 
 ## ✨ Tính năng nổi bật
@@ -46,3 +47,12 @@ Dự án được module hóa thành các Node chức năng riêng biệt, bao g
 ┣ 📜 .gitattributes       
 ┣ 📜 LICENSE              
 ┗ 📜 README.md
+## 📊 Giao diện quản lý hệ thống
+
+### Giao diện quản lý tập trung (ThingsBoard Dashboard)
+Cho phép nhà trường và phụ huynh giám sát tổng quan tình trạng xe, theo dõi số lượng học sinh thực tế, nhiệt độ, độ ẩm và nhận các thông báo/cảnh báo hệ thống ngay trên một màn hình trực quan.
+![Giao diện ThingsBoard](image/thingsboard.png)
+
+### Cơ sở dữ liệu điểm danh (Google Sheets)
+Lưu trữ thông tin học sinh và tự động cập nhật mốc thời gian (Timestamp) ngay khi có thao tác quẹt thẻ lên/xuống xe.
+![Danh sách học sinh Google Sheet](image/DS_googlesheet.png)
