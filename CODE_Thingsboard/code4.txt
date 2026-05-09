@@ -1,0 +1,95 @@
+NEED set in thingsboard : DEVICE : SCHOOL BUS
+       DATA   : So_hoc_sinh_tren_xe
+HTML:
+<div class="counter-card">
+    <div class="header">
+        <span class="icon">🚌</span>
+        <h3 class="title">Số học sinh trên xe</h3>
+    </div>
+    <div class="counter-body">
+        <div class="circle-display">
+            <span class="number">${so_hs_tren_xe:0}</span>
+            <span class="unit">Học sinh</span>
+        </div>
+    </div>
+    <div class="footer">
+        <span class="status-dot pulse"></span>
+        <span class="status-text">Cập nhật: ${so_hs_tren_xe:0} HS</span>
+    </div>
+</div>
+
+CSS:
+
+/* Card Container */
+.counter-card {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 20px;
+    box-shadow:  10px 10px 20px #d9d9d9, -10px -10px 20px #ffffff;
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Header */
+.header {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; margin-bottom: 10px;
+}
+.header .icon { font-size: 24px; }
+.header .title {
+    color: #34495e; font-size: 18px; font-weight: 700;
+    margin: 0; letter-spacing: 1px;
+}
+
+/* Hiển thị vòng tròn số */
+.counter-body {
+    display: flex; justify-content: center; align-items: center; flex-grow: 1;
+}
+.circle-display {
+    width: 160px; height: 160px; border-radius: 50%;
+    background: #fff; border: 8px solid #3498db;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    box-shadow: inset 0px 4px 10px rgba(0,0,0,0.1);
+    
+    /* Hiệu ứng nhịp thở liên tục cho vòng tròn */
+    animation: breath 2s infinite ease-in-out;
+}
+
+@keyframes breath {
+    0% { transform: scale(1); border-color: #3498db; }
+    50% { transform: scale(1.04); border-color: #2ecc71; }
+    100% { transform: scale(1); border-color: #3498db; }
+}
+
+.circle-display .number {
+    font-size: 58px; font-weight: 800; color: #2c3e50; line-height: 1;
+}
+.circle-display .unit {
+    font-size: 14px; color: #7f8c8d; font-weight: 500; margin-top: 5px;
+}
+
+/* Footer trạng thái */
+.footer {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-top: 15px;
+}
+.status-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+}
+.status-text {
+    font-size: 12px; color: #95a5a6;
+}
+
+/* Trạng thái Online */
+.status-dot.online { background-color: #2ecc71; }
+.pulse { animation: pulse-online 1.5s infinite; }
+@keyframes pulse-online {
+    0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(46, 204, 113, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+}

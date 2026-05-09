@@ -1,0 +1,26 @@
+--cpu=Cortex-M4.fp.sp
+"stm32m\startup_stm32f411xe.o"
+"stm32m\main.o"
+"stm32m\stm32f4xx_it.o"
+"stm32m\stm32f4xx_hal_msp.o"
+"stm32m\stm32f4xx_hal_i2c.o"
+"stm32m\stm32f4xx_hal_i2c_ex.o"
+"stm32m\stm32f4xx_hal_rcc.o"
+"stm32m\stm32f4xx_hal_rcc_ex.o"
+"stm32m\stm32f4xx_hal_flash.o"
+"stm32m\stm32f4xx_hal_flash_ex.o"
+"stm32m\stm32f4xx_hal_flash_ramfunc.o"
+"stm32m\stm32f4xx_hal_gpio.o"
+"stm32m\stm32f4xx_hal_dma_ex.o"
+"stm32m\stm32f4xx_hal_dma.o"
+"stm32m\stm32f4xx_hal_pwr.o"
+"stm32m\stm32f4xx_hal_pwr_ex.o"
+"stm32m\stm32f4xx_hal_cortex.o"
+"stm32m\stm32f4xx_hal.o"
+"stm32m\stm32f4xx_hal_exti.o"
+"stm32m\stm32f4xx_hal_uart.o"
+"stm32m\system_stm32f4xx.o"
+--strict --scatter "STM32M\STM32M.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "STM32M.map" -o STM32M\STM32M.axf

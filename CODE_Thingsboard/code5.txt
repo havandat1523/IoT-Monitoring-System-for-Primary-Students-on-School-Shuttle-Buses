@@ -1,0 +1,157 @@
+HTML:
+
+<div class="contact-widget">
+    <button id="openContactBtn" class="btn-contact">
+        <span class="icon">📞</span> HOTLINE
+    </button>
+</div>
+
+<div id="contactModal" class="contact-overlay">
+    <div class="contact-box">
+        <div class="contact-header">
+            <div class="header-icon">🆘</div>
+            <h3>ĐƯỜNG DÂY NÓNG</h3>
+            <p>Nhấn vào số điện thoại để gọi ngay</p>
+        </div>
+
+        <div class="contact-list">
+            
+            <div class="contact-card">
+                <div class="avatar teacher-bg">👩‍🏫</div>
+                <div class="info">
+                    <h4>Cô Hạnh (Chủ nhiệm)</h4>
+                    <a href="tel:0987654321" class="phone-link">0987.654.321</a>
+                </div>
+                <a href="tel:0987654321" class="call-btn">Gọi</a>
+            </div>
+
+            <div class="contact-card">
+                <div class="avatar driver-bg">👨‍✈️</div>
+                <div class="info">
+                    <h4>Bác Tài (Xe số 01)</h4>
+                    <a href="tel:0912345678" class="phone-link">0912.345.678</a>
+                </div>
+                <a href="tel:0912345678" class="call-btn">Gọi</a>
+            </div>
+
+        </div>
+
+        <button id="closeContactBtn" class="btn-close-contact">ĐÓNG LẠI</button>
+    </div>
+</div>
+
+<script>
+    var contactModal = document.getElementById("contactModal");
+    var btnOpenContact = document.getElementById("openContactBtn");
+    var btnCloseContact = document.getElementById("closeContactBtn");
+
+    // Mở hộp thoại
+    btnOpenContact.onclick = function() {
+        contactModal.style.display = "flex";
+    }
+
+    // Đóng hộp thoại khi bấm nút
+    btnCloseContact.onclick = function() {
+        contactModal.style.display = "none";
+    }
+
+    // Đóng hộp thoại nếu bấm ra ngoài vùng màu đen
+    window.onclick = function(event) {
+        if (event.target == contactModal) {
+            contactModal.style.display = "none";
+        }
+    }
+</script>
+
+
+CSS:
+/* --- Nút bấm ngoài màn hình --- */
+.contact-widget { display: flex; justify-content: center; align-items: center; height: 100%; width: 100%;}
+.btn-contact {
+    background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none;
+    padding: 15px 35px; font-size: 16px; font-weight: bold; border-radius: 30px;
+    cursor: pointer; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); transition: all 0.3s ease;
+}
+.btn-contact:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(231, 76, 60, 0.6); }
+
+/* --- Lớp mờ đen bao phủ màn hình --- */
+.contact-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); /* Kính mờ chuẩn iOS */
+    z-index: 2000; justify-content: center; align-items: center;
+}
+
+/* --- Khung thông báo chính --- */
+.contact-box {
+    background: white; border-radius: 24px; width: 350px; overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+    animation: slideUpContact 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes slideUpContact {
+    from { transform: translateY(60px) scale(0.9); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* --- Tiêu đề Header --- */
+.contact-header {
+    background: linear-gradient(135deg, #2c3e50, #1a252f); color: white;
+    padding: 25px 20px 20px; text-align: center;
+}
+.header-icon { font-size: 40px; margin-bottom: 5px; animation: ringIcon 2s infinite; display: inline-block; }
+.contact-header h3 { margin: 0 0 5px 0; font-size: 20px; letter-spacing: 1px; font-family: sans-serif; }
+.contact-header p { margin: 0; font-size: 13px; color: #bdc3c7; }
+
+/* --- Thẻ người liên hệ --- */
+.contact-list { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+
+.contact-card {
+    display: flex; align-items: center; padding: 15px;
+    background: #f8f9fa; border-radius: 16px; transition: all 0.3s ease;
+    border: 1px solid #f1f2f6;
+}
+.contact-card:hover { 
+    background: #fff; transform: translateX(5px); 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-color: #dfe4ea;
+}
+
+/* --- Ảnh đại diện (Avatar) --- */
+.avatar {
+    width: 50px; height: 50px; border-radius: 50%; display: flex;
+    justify-content: center; align-items: center; font-size: 24px; margin-right: 15px;
+}
+.teacher-bg { background: #ffeaa7; } /* Màu vàng chanh cho GV */
+.driver-bg { background: #81ecec; }  /* Màu xanh ngọc cho Tài xế */
+
+/* --- Thông tin chữ --- */
+.info { flex-grow: 1; text-align: left; }
+.info h4 { margin: 0 0 5px 0; font-size: 15px; color: #2d3436; font-family: sans-serif;}
+.phone-link {
+    text-decoration: none; font-size: 18px; font-weight: bold; color: #0984e3;
+    transition: color 0.2s; font-family: monospace; letter-spacing: -0.5px;
+}
+.phone-link:hover { color: #74b9ff; }
+
+/* --- Nút Gọi nhỏ bên trong --- */
+.call-btn {
+    background: #00b894; color: white; text-decoration: none;
+    padding: 10px 18px; border-radius: 20px; font-size: 13px; font-weight: bold;
+    transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0, 184, 148, 0.3);
+}
+.call-btn:hover { background: #00cec9; transform: scale(1.05); }
+
+/* --- Nút Đóng bự dưới cùng --- */
+.btn-close-contact {
+    width: calc(100% - 40px); margin: 0 20px 20px; padding: 14px;
+    background: #dfe6e9; color: #2d3436; border: none; border-radius: 14px;
+    font-size: 15px; font-weight: bold; cursor: pointer; transition: background 0.3s;
+}
+.btn-close-contact:hover { background: #b2bec3; }
+
+/* Hiệu ứng rung chuông cấp cứu */
+@keyframes ringIcon {
+    0%, 100% { transform: rotate(0); }
+    10%, 30%, 50% { transform: rotate(-15deg) scale(1.1); }
+    20%, 40% { transform: rotate(15deg) scale(1.1); }
+    60% { transform: rotate(0) scale(1); }
+}

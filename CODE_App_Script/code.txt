@@ -1,0 +1,157 @@
+function doGet(e) {
+  var SHEET_ID = '1pUllY81pjnAav5oK4usJxWI9V1wErOPNGfRhkntnnLE';
+  var SHEET_NAME = "DATA";
+  var TIMEZONE = "Asia/Ho_Chi_Minh";
+  var SPAM_TIME = 10000; // 10 giây
+
+  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  
+  // Dùng getDisplayValues() để chống lỗi định dạng ngày tháng của Google Sheet
+  var data = sheet.getDataRange().getDisplayValues();
+
+  var now = new Date();
+  var nowTimestamp = now.getTime();
+  var currentHour = parseInt(Utilities.formatDate(now, TIMEZONE, "HH"));
+  var todayStr = Utilities.formatDate(now, TIMEZONE, "dd/MM/yyyy");
+  var timeStr = Utilities.formatDate(now, TIMEZONE, "HH:mm:ss");
+
+  var isBefore16 = (currentHour < 20); // Mốc 16h chiều
+
+  // ================= ĐĂNG KÝ NGHỈ =================
+  if (e.parameter && e.parameter.action == "leave") {
+    var studentID = e.parameter.id.trim();
+    var leaveDate = e.parameter.date.trim();
+
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][1].toString().trim() === studentID) {
+        // Ghi dưới định dạng Text (@) để tránh nhảy ngày
+        sheet.getRange(i + 1, 9).setNumberFormat('@').setValue(leaveDate);
+        sheet.getRange(i + 1, 6, 1, 3).clearContent(); // clear F,G,H
+        return ContentService.createTextOutput("OK");
+      }
+    }
+    return ContentService.createTextOutput("NOT_FOUND");
+  }
+
+  // ================= KIỂM TRA ID =================
+  if (!e.parameter || !e.parameter.id) {
+    return ContentService.createTextOutput("ERROR:NO_ID");
+  }
+
+  var studentID = e.parameter.id.trim();
+  var rowIndex = -1;
+  var currentSTT = 0;
+
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][1].toString().trim() === studentID) {
+      rowIndex = i;
+      currentSTT = parseInt(data[i][0]);
+      break;
+    }
+  }
+
+  if (rowIndex === -1) {
+    return ContentService.createTextOutput("NOT_FOUND");
+  }
+
+  // ================= ĐỌC CHÍNH XÁC KÝ TỰ HIỂN THỊ TRÊN SHEET =================
+  var rowDisplayData = sheet.getRange(rowIndex + 1, 1, 1, 9).getDisplayValues()[0];
+  var dateStr = rowDisplayData[5].trim(); // Cột F (Date)
+  var gioLen = rowDisplayData[6].trim();  // Cột G (Giờ lên)
+  var gioTra = rowDisplayData[7].trim();  // Cột H (Giờ trả)
+
+  // Nếu ngày trên Sheet khác ngày hôm nay -> Reset xóa trắng
+  if (dateStr !== "" && dateStr !== todayStr) {
+    sheet.getRange(rowIndex + 1, 6, 1, 3).clearContent();
+    gioLen = "";
+    gioTra = "";
+    dateStr = "";
+  }
+
+  // ================= HÀM CHỐNG SPAM =================
+  function isSpam(timeStrOld) {
+    if (!timeStrOld) return false;
+    var t = timeStrOld.split(":");
+    var old = new Date(now);
+    old.setHours(t[0], t[1], t[2]);
+    return (nowTimestamp - old.getTime()) < SPAM_TIME;
+  }
+
+  // ====================================================
+  //               LƯỢT ĐI: TRƯỚC 16H (SÁNG)
+  // ====================================================
+  if (isBefore16) {
+    
+    // 1. KIỂM TRA QUẸT LẶP TRONG NGÀY (M_ALREADY & M_SPAM)
+    if (dateStr === todayStr && gioLen !== "") {
+      if (isSpam(gioLen)) {
+        return ContentService.createTextOutput("M_SPAM");
+      }
+      return ContentService.createTextOutput("M_ALREADY");
+    }
+
+    // 2. GHI DỮ LIỆU LÊN SHEET (Ghi định dạng Text chống lỗi)
+    sheet.getRange(rowIndex + 1, 6).setNumberFormat('@').setValue(todayStr);
+    sheet.getRange(rowIndex + 1, 7).setNumberFormat('@').setValue(timeStr);
+    sheet.getRange(rowIndex + 1, 9).setValue(""); // Xóa phép
+
+    // 3. TÌM XEM CÓ PHẢI LÀ NGƯỜI CUỐI CÙNG KHÔNG (KIỂM TRA M_END)
+    var isLastStop = true;
+    
+    // Vòng lặp chỉ quét các học sinh NẰM BÊN DƯỚI học sinh vừa quẹt thẻ
+    for (var j = rowIndex + 1; j < data.length; j++) {
+      var nextID = data[j][1].toString().trim();       // Mã thẻ người bên dưới
+      var nextLeave = data[j][8].toString().trim();    // Ngày xin nghỉ người bên dưới
+      
+      // Nếu bên dưới CÒN MÃ THẺ và NGƯỜI ĐÓ KHÔNG XIN NGHỈ HÔM NAY
+      if (nextID.length > 3 && nextLeave !== todayStr) {
+        isLastStop = false; // Báo hiệu chưa phải trạm cuối
+        break; 
+      }
+    }
+
+    // 4. XUẤT KẾT QUẢ (Không còn M_V)
+    if (isLastStop) {
+      return ContentService.createTextOutput("M_END"); // Báo người cuối cùng
+    }
+    
+    // Các trường hợp khác đều là bình thường
+    return ContentService.createTextOutput("M_OK"); 
+  }
+
+  // ====================================================
+  //               LƯỢT VỀ: SAU 16H (CHIỀU)
+  // ====================================================
+  else {
+    // Kiểm tra quẹt lặp buổi chiều
+    if (dateStr === todayStr && gioTra !== "") {
+      if (isSpam(gioTra)) {
+        return ContentService.createTextOutput("A_SPAM");
+      }
+      return ContentService.createTextOutput("A_ALREADY");
+    }
+
+    // Ghi dữ liệu trả
+    sheet.getRange(rowIndex + 1, 8).setNumberFormat('@').setValue(timeStr);
+
+    // Kiểm tra còn ai chưa trả
+    data = sheet.getDataRange().getDisplayValues(); // Dùng getDisplayValues để đọc lại
+    var remaining = 0;
+
+    for (var i = 1; i < data.length; i++) {
+      var dStr = data[i][5].toString().trim();
+      var len = data[i][6].toString().trim();
+      var tra = data[i][7].toString().trim();
+
+      if (dStr === todayStr && len !== "" && tra === "") {
+        remaining++;
+      }
+    }
+
+    if (remaining === 0) {
+      return ContentService.createTextOutput("A_END");
+    } else {
+      return ContentService.createTextOutput("A_C" + remaining); 
+    }
+  }
+}

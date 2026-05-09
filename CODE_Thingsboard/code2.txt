@@ -1,0 +1,232 @@
+HTML:
+<div class="card-container">
+    <button id="openModalBtn" class="btn-main">
+        <span class="icon">📅</span> ĐĂNG KÝ NGHỈ HỌC
+    </button>
+</div>
+
+<div id="formModal" class="modal-overlay">
+    <div class="modal-box">
+        <span id="closeModalBtn" class="close-btn">&times;</span>
+        <div class="modal-header">
+            <h3>THÔNG TIN NGHỈ HỌC</h3>
+            <p>Vui lòng điền thông tin chính xác</p>
+        </div>
+        
+        <input type="text" id="studentId" class="input-field" placeholder="Mã học sinh (VD: 1234567890)">
+        <input type="text" id="studentName" class="input-field" placeholder="Tên học sinh">
+        <input type="date" id="leaveDate" class="input-field">
+        
+        <button id="btnSubmit" class="btn-submit">Gửi thông tin nghỉ học</button>
+        <div id="statusMsg"></div>
+    </div>
+</div>
+
+<div id="alertModal" class="modal-overlay">
+    <div class="modal-box alert-box">
+        <div class="alert-icon">🔔</div>
+        <h3 style="color: #27ae60;">Đăng ký thành công!</h3>
+        <p style="color: #555; line-height: 1.5; margin-bottom: 25px;">
+            Phụ huynh nên gọi điện trực tiếp cho <b>Giáo viên chủ nhiệm</b> hoặc <b>Tài xế</b> để xác nhận thêm nhé!
+        </p>
+        <button id="btnOkAlert" class="btn-submit alert-btn">OK, Tôi hiểu</button>
+    </div>
+</div>
+
+<script>
+    var modal = document.getElementById("formModal");
+    var alertModal = document.getElementById("alertModal"); // Khai báo modal mới
+    
+    var btnOpen = document.getElementById("openModalBtn");
+    var btnClose = document.getElementById("closeModalBtn");
+    var btnSubmit = document.getElementById("btnSubmit");
+    var btnOkAlert = document.getElementById("btnOkAlert"); // Nút OK của modal mới
+    var statusMsg = document.getElementById("statusMsg");
+
+    // Mở form đăng ký
+    btnOpen.onclick = function() {
+        modal.style.display = "flex";
+        statusMsg.innerText = ""; 
+        btnSubmit.innerText = "Gửi thông tin nghỉ học";
+        btnSubmit.disabled = false;
+        btnSubmit.style.background = "#27ae60"; 
+    }
+
+    // Nút tắt form
+    btnClose.onclick = function() { 
+        modal.style.display = "none"; 
+    }
+
+    // Khi phụ huynh bấm "OK, Tôi hiểu" trên hộp thông báo mới
+    btnOkAlert.onclick = function() {
+        alertModal.style.display = "none"; // Tắt hộp thông báo
+        
+        // Dọn sạch form nhập liệu để người sau dùng
+        document.getElementById("studentId").value = "";
+        document.getElementById("studentName").value = "";
+        document.getElementById("leaveDate").value = "";
+    }
+
+    // Xử lý Gửi dữ liệu
+    btnSubmit.onclick = function() {
+        var id = document.getElementById("studentId").value.trim();
+        var name = document.getElementById("studentName").value.trim();
+        var rawDate = document.getElementById("leaveDate").value;
+
+        if(!id || !name || !rawDate) {
+            statusMsg.innerText = "⚠️ Ối! Bạn nhập thiếu thông tin rồi.";
+            statusMsg.style.color = "#e74c3c";
+            return;
+        }
+
+        var dateParts = rawDate.split("-");
+        var formattedDate = dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = "<span class='loading-dots'>Đang ghi vào sổ</span>";
+        statusMsg.innerText = "";
+
+        // ========================================================
+        // NHỚ DÁN LẠI ĐƯỜNG LINK GOOGLE SCRIPT
+        var scriptURL = "https://script.google.com/macros/s/AKfycbxw0pxOAQZ3R42Ly-519VM4gEww0pZO-2QpeFbzoS9xIMec2oi8g6iZL0CadGs5wAhJ/exec";
+        // ========================================================
+
+        var finalURL = scriptURL + "?action=leave&id=" + encodeURIComponent(id) + "&name=" + encodeURIComponent(name) + "&date=" + encodeURIComponent(formattedDate);
+
+        fetch(finalURL)
+        .then(response => response.text())
+        .then(result => {
+            if(result === "OK") {
+                btnSubmit.style.background = "#27ae60";
+                btnSubmit.innerHTML = "✔ Đã ghi thành công!";
+                statusMsg.innerText = "Chuẩn bị tải hộp thoại...";
+                statusMsg.style.color = "#27ae60";
+                
+                // ĐỢI 1 GIÂY RỒI TẮT FORM, BẬT HỘP THÔNG BÁO "GỌI ĐIỆN" LÊN
+                setTimeout(function(){ 
+                    modal.style.display = "none";     // Tắt form nhập liệu
+                    alertModal.style.display = "flex"; // Bật bảng nhắc nhở gọi điện
+                }, 1000); 
+            } 
+            else if (result === "NOT_FOUND") {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = "Thử lại";
+                statusMsg.innerText = "❌ Lỗi: Không tìm thấy Mã học sinh trong danh sách!";
+                statusMsg.style.color = "#e74c3c";
+            } 
+            else {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = "Thử lại";
+                statusMsg.innerText = "❌ Lỗi không xác định: " + result;
+                statusMsg.style.color = "#e74c3c";
+            }
+        })
+        .catch(error => {
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = "Thử lại";
+            statusMsg.innerText = "❌ Lỗi: Không thể kết nối với Google Sheets!";
+            statusMsg.style.color = "#e74c3c";
+        });
+    }
+</script>
+
+CSS:
+/* Nền động (Animated Gradient) cho toàn bộ widget */
+.card-container { 
+    display: flex; justify-content: center; align-items: center; 
+    height: 100%; width: 100%; border-radius: 12px;
+    background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a18cd1, #fbc2eb);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Nút bấm chính đập nhịp tim */
+.btn-main {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53); color: white; border: none;
+    padding: 15px 35px; font-size: 18px; font-weight: bold; border-radius: 50px;
+    cursor: pointer; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    animation: pulse-shadow 2s infinite; 
+    transition: transform 0.2s;
+}
+.btn-main:hover { transform: translateY(-3px) scale(1.02); }
+
+@keyframes pulse-shadow {
+    0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 107, 107, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+}
+
+/* Hiệu ứng Form nổi lên */
+.modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); 
+    z-index: 1000; justify-content: center; align-items: center;
+}
+.modal-box {
+    background: white; padding: 35px 30px; border-radius: 20px; width: 340px;
+    position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes bounceIn {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Các trường nhập liệu */
+.close-btn { position: absolute; top: 15px; right: 20px; font-size: 28px; color: #aaa; cursor: pointer; transition: color 0.2s;}
+.close-btn:hover { color: #ff4444; }
+.modal-header h3 { margin: 0 0 5px 0; color: #2c3e50; font-size: 22px; }
+.modal-header p { margin: 0 0 20px 0; color: #7f8c8d; font-size: 13px; }
+
+.input-field {
+    width: 100%; padding: 14px; margin: 8px 0 15px 0; border: 2px solid #eee;
+    border-radius: 10px; box-sizing: border-box; font-size: 15px; transition: border 0.3s;
+}
+.input-field:focus { border-color: #FF8E53; outline: none; }
+
+.btn-submit {
+    width: 100%; padding: 14px; background: #27ae60; color: white; border: none;
+    border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+}
+.btn-submit:hover { background: #2ecc71; }
+.btn-submit:active { transform: scale(0.97); } 
+.btn-submit:disabled { background: #95a5a6; cursor: not-allowed; }
+
+#statusMsg { margin-top: 15px; font-size: 14px; font-weight: bold; text-align: center; }
+
+/* CSS CHI TIẾT CHO HỘP THÔNG BÁO MỚI */
+.alert-box { text-align: center; }
+.alert-icon { 
+    font-size: 60px; margin-bottom: 10px; 
+    animation: ringing 1.5s ease-in-out infinite; 
+    transform-origin: top center;
+}
+.alert-btn { background: #3498db; }
+.alert-btn:hover { background: #2980b9; }
+
+@keyframes ringing {
+    0% { transform: rotate(0); }
+    10% { transform: rotate(15deg); }
+    20% { transform: rotate(-10deg); }
+    30% { transform: rotate(15deg); }
+    40% { transform: rotate(-10deg); }
+    50% { transform: rotate(0); }
+    100% { transform: rotate(0); }
+}
+
+/* Hiệu ứng 3 dấu chấm */
+.loading-dots:after { content: ' .'; animation: dots 1.5s steps(5, end) infinite; }
+@keyframes dots {
+    0%, 20% { color: rgba(0,0,0,0); text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}
+    40% { color: white; text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);}
+    60% { text-shadow: .25em 0 0 white, .5em 0 0 rgba(0,0,0,0);}
+    80%, 100% { text-shadow: .25em 0 0 white, .5em 0 0 white;}
+}

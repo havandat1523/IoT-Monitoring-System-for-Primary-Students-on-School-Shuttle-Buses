@@ -1,0 +1,150 @@
+HTML:
+
+<div class="news-ticker-container">
+    <div class="ticker-body">
+        <div class="megaphone">📢</div>
+        <div id="tickerContent" class="ticker-content">
+            Đang tải thông báo...
+        </div>
+    </div>
+    
+    <div class="ticker-footer">
+        Cập nhật: 14/04/2026
+    </div>
+</div>
+
+<script>
+    // Thêm độ trễ 0.5 giây (500ms) để chắc chắn ThingsBoard đã tải xong HTML
+    setTimeout(function() {
+        var announcements = [
+            "Thứ 2 (20/04/2026): Do trời mưa lớn, nhà trường hủy buổi chào cờ đầu tuần. Các con di chuyển thẳng lên lớp.",
+            "Thời tiết hôm nay nắng nóng như lò bát quái! Phụ huynh nhớ trang bị mũ nón và bình nước cá nhân.",
+            "Nhắc nhở: Tuần này các khối lớp sẽ có bài kiểm tra định kỳ. Phụ huynh đôn đốc các con ôn bài đầy đủ.",
+            "Thực đơn bán trú hôm nay có món gà rán và canh súp lơ. Đảm bảo các con sẽ rất thích!",
+            "Thông báo: Bác tài xế xe số 01 nhặt được một chiếc áo khoác bỏ quên. Phụ huynh liên hệ để nhận lại.",
+            "Lưu ý an toàn: Khu vực cổng trường cấm đỗ xe ô tô quá 5 phút để tránh ùn tắc vào giờ tan tầm.",
+            "Tin vui: Đội tuyển bơi lội của trường vừa xuất sắc giành giải Nhất cấp thành phố. Xin chúc mừng!",
+            "Chương trình ngoại khóa 'Khám phá thiên nhiên' sẽ diễn ra vào Thứ Sáu. Hạn chót nộp phiếu là ngày mai.",
+            "Phòng y tế nhắc nhở: Đang vào mùa dịch, các con vui lòng mặc quần áo dài tay và thoa kem chống muỗi.",
+            "Lời khen ngợi: Tập thể lớp 3A hôm nay đã có hành động rất đẹp khi nhặt được của rơi trả lại người mất."
+        ];
+
+        var currentIndex = 0;
+        var tickerElement = document.getElementById("tickerContent");
+
+        // Nếu tìm thấy khung HTML thì mới bắt đầu chạy
+        if(tickerElement) {
+            // Hiện câu đầu tiên
+            tickerElement.innerText = announcements[0];
+            tickerElement.classList.add("fade-in");
+
+            // Đặt lịch đổi câu sau mỗi 3.5 giây
+            setInterval(function() {
+                // Làm mờ và tụt xuống
+                tickerElement.classList.remove("fade-in");
+                tickerElement.classList.add("fade-out");
+
+                // Đợi 0.4s rồi thay chữ và trượt lên
+                setTimeout(function() {
+                    currentIndex = (currentIndex + 1) % announcements.length;
+                    tickerElement.innerText = announcements[currentIndex];
+                    
+                    tickerElement.classList.remove("fade-out");
+                    tickerElement.classList.add("fade-in");
+                }, 400); 
+            }, 3500);
+        }
+    }, 500); 
+</script>
+
+CSS:
+
+/* Toàn bộ khung Widget */
+.news-ticker-container {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05), inset 0 2px 0 rgba(255,255,255,1);
+    border: 1px solid #edf2f7;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Thanh màu xanh trang trí trên cùng */
+.news-ticker-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 5px;
+    background: linear-gradient(90deg, #3498db, #2ecc71, #f1c40f, #e74c3c);
+    background-size: 400% 100%;
+    animation: gradientBar 5s ease infinite;
+}
+
+@keyframes gradientBar {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Phần Nội dung thông báo */
+.ticker-body {
+    flex-grow: 1;
+    display: flex;
+    align-items: center; 
+    justify-content: flex-start; 
+    position: relative;
+    padding: 10px 0;
+    gap: 15px; /* Tạo khoảng cách giữa loa và chữ */
+}
+
+/* Biểu tượng cái loa */
+.megaphone {
+    font-size: 30px;
+    animation: shake 2.5s infinite;
+    transform-origin: bottom left;
+    flex-shrink: 0; /* Giữ nguyên kích thước loa, không bị bóp méo */
+}
+
+@keyframes shake {
+    0%, 100% { transform: rotate(0deg); }
+    5%, 15% { transform: rotate(-15deg); }
+    10%, 20% { transform: rotate(15deg); }
+    25% { transform: rotate(0deg); }
+}
+
+/* Dòng chữ thông báo chạy */
+.ticker-content {
+    font-size: 17px; /* Tăng cỡ chữ lên cho dễ đọc */
+    color: #2c3e50;
+    line-height: 1.5;
+    font-weight: 600;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Hiệu ứng trượt lên và hiện rõ */
+.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hiệu ứng tụt xuống và mờ đi */
+.fade-out {
+    opacity: 0;
+    transform: translateY(15px);
+}
+
+/* Dòng thời gian nhỏ ở góc dưới */
+.ticker-footer {
+    text-align: right;
+    font-size: 11px;
+    color: #a0aec0;
+    font-style: italic;
+    margin-top: auto;
+    border-top: 1px dashed #e2e8f0;
+    padding-top: 10px;
+}

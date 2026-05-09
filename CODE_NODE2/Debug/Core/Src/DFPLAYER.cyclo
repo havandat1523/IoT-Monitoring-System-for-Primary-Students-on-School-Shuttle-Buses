@@ -1,0 +1,16 @@
+../Core/Src/DFPLAYER.c:12:13:DFPLAYER_SendUART	1
+../Core/Src/DFPLAYER.c:16:13:DFPLAYER_Delay	1
+../Core/Src/DFPLAYER.c:21:17:DFPLAYER_GetChecksum	2
+../Core/Src/DFPLAYER.c:31:13:DFPLAYER_FillBigend	1
+../Core/Src/DFPLAYER.c:36:13:DFPLAYER_FillChecksum	1
+../Core/Src/DFPLAYER.c:41:13:DFPLAYER_SendCmd	1
+../Core/Src/DFPLAYER.c:52:6:DFPLAYER_Init	2
+../Core/Src/DFPLAYER.c:61:6:DFPLAYER_PlayTrack	1
+../Core/Src/DFPLAYER.c:68:6:DFPLAYER_Next	1
+../Core/Src/DFPLAYER.c:73:6:DFPLAYER_Prev	1
+../Core/Src/DFPLAYER.c:78:6:DFPLAYER_SetVolume	1
+../Core/Src/DFPLAYER.c:85:6:DFPLAYER_Play	1
+../Core/Src/DFPLAYER.c:90:6:DFPLAYER_Pause	1
+../Core/Src/DFPLAYER.c:95:6:DFPLAYER_Stop	1
+../Core/Src/DFPLAYER.c:100:6:DFPLAYER_RandomPlay	1
+../Core/Src/DFPLAYER.c:105:6:DFPLAYER_PlayFileInFolder	1
