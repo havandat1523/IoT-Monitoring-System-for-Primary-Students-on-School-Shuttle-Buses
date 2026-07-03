@@ -9,7 +9,7 @@ Hệ thống IoT giám sát học sinh trên xe đưa đón. Sử dụng STM32F4
 
 ## ✨ Tính năng nổi bật
 - **Điểm danh thông minh tự động:** Ghi nhận học sinh lên/xuống xe thông qua công nghệ quét thẻ không tiếp xúc RFID, tự động đồng bộ thời gian và danh tính lên Google Sheets.
-- **Xử lý Edge AI - Trí tuệ nhân tạo tại biên:** Sử dụng ESP32-S3 kết hợp camera OV2640 chạy mô hình mạng nơ-ron (CNN) để nhận diện khuôn mặt và đếm số lượng người trực tiếp trên thiết bị với độ trễ thấp.
+- **Xử lý Edge AI - Trí tuệ nhân tạo tại biên:** Sử dụng ESP32-S3 kết hợp camera OV2640 chạy mô hình mạng nơ-ron (CNN) để nhận diện khuôn mặt người trực tiếp trên thiết bị với độ trễ thấp.
 - **Chống bỏ quên học sinh (An toàn dự phòng):** Giám sát liên tục trạng thái ghế ngồi (cảm biến tải trọng) kết hợp so sánh với sĩ số điểm danh. Tự động kích hoạt quy trình khẩn cấp nếu phát hiện học sinh còn sót lại khi tài xế đã tắt máy rời xe.
 - **Cảnh báo khẩn cấp đa lớp (Multi-layer Alert):** - *Cảnh báo tại chỗ:* Kích hoạt còi hú và loa thông báo bằng giọng nói tiếng Việt (thông qua module giải mã DFPlayer).
   - *Cảnh báo từ xa:* Đẩy thông báo tức thời lên Cloud Dashboard và tự động nhắn tin SMS/gọi điện trực tiếp vào số phụ huynh, tài xế qua module mạng di động SIM 4G.
@@ -70,9 +70,3 @@ Lưu trữ thông tin số lượng học sinh và hỗ trợ tài xế kiểm t
 ## 👥 Đội ngũ thực hiện & Lời cảm ơn
 Dự án được nghiên cứu và triển khai trong khuôn khổ môn học **Thiết kế hệ thống IoT**.
 
-- **Giảng viên hướng dẫn:** ThS. Tô Thị Tuyết Nhung
-- **Nhóm sinh viên thực hiện:**
-  - Hà Văn Đạt – DT060209
-  - Dương Hải Đăng – DT060206
-  - Nguyễn Mạnh Lân – DT060231
-  - Đặng Chí Tuệ - DT060248
